@@ -1,0 +1,17 @@
+# torch==2.3.0
+# torchvision==0.18.0
+# easydict==1.9
+opencv-python==4.2.0.34
+numpy==1.18.3
+# open3d
+tensorflow==1.15.0
+scikit-image==0.14.5
+protobuf==3.20.0
+# torchsummary==1.5.1
+# tensorboard==2.11.0
+# scikit-learn==0.22.2
+# wget==3.2
+# tqdm==4.54.0
+# matplotlib==3.3.3
+# typeguard
+# pyyaml

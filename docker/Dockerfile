@@ -1,0 +1,219 @@
+FROM nvidia/cuda:11.8.0-devel-ubuntu18.04
+
+ARG user
+ARG uid
+ARG gid
+ARG DEBIAN_FRONTEND=noninteractive
+ENV NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES:-all}
+ENV NVIDIA_DRIVER_CAPABILITIES=${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
+
+# COPY ./install_carla.sh /tmp/
+# COPY ./install_ros2.sh /tmp/
+# COPY ./install_ros2_from_source.sh /tmp/
+# COPY ./install_gazebo.sh /tmp/
+
+# COPY ./post_install_carla.sh /tmp/
+# COPY ./post_install.sh /tmp/
+COPY ./requirements_3.6.txt /tmp/
+
+# COPY ./px4/ubuntu.sh ./px4/requirements.txt /tmp/
+# COPY ./carla/carla-0.9.15-cp37-cp37m-manylinux_2_27_x86_64.whl /tmp/
+
+# RUN useradd -ms /bin/bash $user
+RUN adduser $user --disabled-password  --gecos ""
+RUN usermod -a -G sudo $user
+
+RUN mkdir -p /home/$user/workspace/
+
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
+ENV DEBIAN_FRONTEND=noninteractive
+RUN dpkg-reconfigure dash
+
+RUN apt-get update
+
+RUN apt-get install -y software-properties-common curl wget
+RUN apt-get install -y \
+    bash-completion \
+    locales \
+    build-essential \
+    lsb-release \
+    sudo \
+    ccache \
+    wget \
+    rsync \
+    libssl-dev
+
+    # RUN apt-get install -y \
+#     libjsoncpp-dev \
+#     meson \
+#     python3-tk \
+#     gnupg2 \
+#     python3-pip \
+#     python3-protobuf \
+#     python3-pexpect \
+#     ccache \
+#     wget \
+#     rsync
+
+
+# RUN add-apt-repository ppa:deadsnakes/ppa && \
+#     apt-get update && \
+#     apt-get install -y python3.7
+# #bionic
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 1 && \
+    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 2 && \
+    update-alternatives --config python3
+# #focal
+# RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1 && \
+#     update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 2 && \
+#     update-alternatives --config python3
+# RUN apt-get install -y python3.7-venv python3.7-distutils
+# # RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+# # RUN python3.7 get-pip.py
+# RUN curl https://bootstrap.pypa.io/pip/3.7/get-pip.py -o get-pip.py
+# RUN python3.7 get-pip.py
+# RUN ln -s /usr/lib/python3/dist-packages/gi/_gi.cpython-{36m,37m}-x86_64-linux-gnu.so
+
+# RUN apt-get remove -y python3.8
+# RUN apt-get purge -y python3.8
+# RUN apt-get autoremove -y
+
+
+# RUN apt-get install -y keyboard-configuration
+# RUN TZ=Etc/UTC apt-get install -y tzdata
+
+
+# RUN apt-get install -y --no-install-recommends \
+#     less \
+#     emacs \
+#     tmux \
+#     bash-completion \
+#     command-not-found \
+#     software-properties-common \
+#     xsel \
+#     xdg-user-dirs \
+#     python3-pip \
+#     python3-protobuf \
+#     python3-pexpect \
+#     pcl-tools \
+#     libomp-19-dev \
+#     libomp5-19 \
+#     vulkan-utils \
+#     curl
+    
+# RUN apt-get clean && \
+#     rm -rf /var/lib/apt/lists/*
+
+# RUN sudo apt install -y \
+#     vulkan-utils \
+#     command-not-found \
+#     xdg-user-dirs
+
+    
+# # Vulkan
+# RUN mkdir -p /etc/vulkan/icd.d && \
+#     echo '{ "file_format_version" : "1.0.0", "ICD" : { "library_path" : "libGLX_nvidia.so.0", "api_version" : "1.1.99" } }' > /etc/vulkan/icd.d/nvidia_icd.json
+# RUN echo > /etc/ld.so.preload
+
+
+# RUN apt-get install -y python3-apt python3-gi --reinstall
+# RUN apt-get install -y libfreeimage-dev libode-dev
+# RUN apt-get install -y python3-colcon-common-extensions \
+#     python3-rosinstall-generator \
+#     python3-flake8 \
+#     python3-pip \
+#     python3-pytest \
+#     python3-pytest-cov \
+#     python3-sip-dev \
+#     python3-dev
+
+
+
+#     python3-setuptools \
+#     python3-vcstool \
+#     python3-rosdep2
+
+
+
+# # RUN wget https://apt.llvm.org/llvm.sh
+# # RUN bash llvm.sh 10
+# # RUN apt install -y clang-10
+
+#     # build-essential clang-3.9 git cmake ninja-build python3-requests python-dev tzdata sed curl wget unzip autoconf libtool
+
+
+# RUN apt-get update
+# RUN cd /usr/lib/python3/dist-packages && \
+#     ln -s apt_pkg.cpython-36m-`uname -m`-linux-gnu.so apt_pkg.so; \
+#     cd -
+
+        # ## carla
+# # RUN apt-get update
+# # RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 92635A407F7A020C
+# # RUN add-apt-repository "deb [arch=amd64 trusted=yes] http://dist.carla.org/carla-0.9.9/ all main"
+
+# # RUN apt-get update
+# # RUN apt-get install carla-simulator -y
+# # Install the latest CARLA version, or update the current installation
+# # cd /opt/carla-simulator # Open the folder where CARLA is installed
+
+
+
+# RUN locale-gen en_US en_US.UTF-8
+# RUN dpkg-reconfigure locales
+
+RUN chown -Rv _apt:root /var/cache/apt/archives/partial/
+RUN chmod -Rv 700 /var/cache/apt/archives/partial/
+
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1-linux-`uname -m`.tar.gz && \
+   tar xvf cmake-3.22.1-linux-`uname -m`.tar.gz --strip-components=1 -C /usr/local/
+
+
+# # RUN pip3 install --user pygame numpy
+
+
+# # RUN sudo /tmp/install_carla.sh
+# # RUN sudo /tmp/install_ros2.sh
+
+RUN apt-get update; apt-get install libsm6 libxrender1 libfontconfig1
+RUN apt-get install libxext6
+
+
+RUN echo "${user} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+USER ${user}
+# WORKDIR /home/${user}
+
+SHELL ["/bin/bash", "-c"]
+# RUN sudo rosdep init
+# RUN rosdep update
+RUN pip3 install --upgrade pip
+RUN pip3 install distro
+
+# RUN /tmp/install_ros2_from_source.sh
+
+# # RUN /tmp/post_install.sh
+# # RUN /tmp/post_install_carla.sh
+RUN pip3 install -r /tmp/requirements_3.6.txt
+# RUN pip3 install -U lark
+
+
+#RUN sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+#RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add
+
+# # 18.04, bionic
+# RUN sudo apt-add-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic main"
+# RUN sudo apt-get update
+# RUN sudo apt-get install -y build-essential
+# RUN sudo apt-get install -y lld-8 g++-7 cmake ninja-build
+# RUN sudo apt-get install -y python python-pip python-dev libpng-dev libtiff5-dev libjpeg-dev tzdata sed curl unzip autoconf libtool rsync libxml2-dev git
+# RUN sudo apt-get install -y libvulkan1
+# RUN sudo apt-get install -y clang-8
+# RUN update-alternatives --install /usr/bin/clang++ clang++ /usr/lib/llvm-8/bin/clang++ 180
+# RUN update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-8/bin/clang 180
+
+# # 20.04, focal
+# RUN apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal main"
+# RUN apt-get update
+# RUN apt-get install build-essential clang-10 lld-10 g++-7 cmake ninja-build libvulkan1 python python-dev python3-dev python3-pip libpng-dev libtiff5-dev libjpeg-dev tzdata sed curl unzip autoconf libtool rsync libxml2-dev git
+# RUN update-alternatives --install /usr/bin/clang++ clang++ /usr/lib/llvm-10/bin/clang++ 180 &&
+# RUN update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-10/bin/clang 180
